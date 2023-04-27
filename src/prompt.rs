@@ -5,6 +5,7 @@ use std::borrow::Cow;
 pub struct ReplPrompt {
     default: DefaultPrompt,
     prefix: String,
+    indicator: String,
 }
 
 impl Prompt for ReplPrompt {
@@ -19,12 +20,20 @@ impl Prompt for ReplPrompt {
     fn render_prompt_right(&self) -> Cow<str> {
         self.default.render_prompt_right()
     }
+
     fn render_prompt_indicator(&self, edit_mode: PromptEditMode) -> Cow<str> {
-        self.default.render_prompt_indicator(edit_mode)
+        if self.indicator.is_empty() {
+            self.default.render_prompt_indicator(edit_mode)
+        }
+        else {
+            Cow::Borrowed(&self.indicator)
+        }
     }
+
     fn render_prompt_multiline_indicator(&self) -> Cow<str> {
         self.default.render_prompt_multiline_indicator()
     }
+
     fn render_prompt_history_search_indicator(
         &self,
         history_search: PromptHistorySearch,
@@ -36,7 +45,9 @@ impl Prompt for ReplPrompt {
 
 impl Default for ReplPrompt {
     fn default() -> Self {
-        ReplPrompt::new("repl")
+        ReplPrompt::new(
+            "repl",
+        )
     }
 }
 
@@ -46,11 +57,16 @@ impl ReplPrompt {
         ReplPrompt {
             prefix: left_prompt.to_string(),
             default: DefaultPrompt::default(),
+            indicator: String::new()
         }
     }
 
     #[allow(dead_code)]
     pub fn update_prefix(&mut self, prefix: &str) {
         self.prefix = prefix.to_string();
+    }
+
+    pub fn update_indicator(&mut self, indicator: &str) {
+        self.indicator = indicator.to_string();
     }
 }

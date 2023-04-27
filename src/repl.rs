@@ -63,7 +63,9 @@ where
             KeyCode::Tab,
             ReedlineEvent::Menu("completion_menu".to_string()),
         );
-        let prompt = ReplPrompt::new(&paint_green_bold(&format!("{}> ", name)));
+
+        // possible to get rid of this? 
+        let prompt = ReplPrompt::new(&paint_green_bold(&format!("{name}")));
 
         Self {
             name,
@@ -157,6 +159,12 @@ where
     /// &Paint::green(format!("{}> ", name)).bold().to_string()
     pub fn with_formatted_prompt(mut self, prompt: &str) -> Self {
         self.prompt.update_prefix(prompt);
+
+        self
+    }
+
+    pub fn with_prompt_indicator(mut self, prompt_indicator: &str) -> Self {
+        self.prompt.update_indicator(prompt_indicator);
 
         self
     }
