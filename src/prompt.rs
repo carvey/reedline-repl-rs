@@ -6,6 +6,7 @@ pub struct ReplPrompt {
     default: DefaultPrompt,
     prefix: String,
     indicator: String,
+    timestamp: bool
 }
 
 impl Prompt for ReplPrompt {
@@ -16,11 +17,17 @@ impl Prompt for ReplPrompt {
         }
     }
 
-    // call default impl
+    // if timestamp is true, render timestamp on right side of prompt. Otherwise render nothing on right side
     fn render_prompt_right(&self) -> Cow<str> {
-        self.default.render_prompt_right()
+        if self.timestamp {
+            self.default.render_prompt_right()
+        }
+        else {
+            Cow::Borrowed("")
+        }
     }
 
+    // if indicator is empty, use default indicator from reedline. Otherwise use indicator provided
     fn render_prompt_indicator(&self, edit_mode: PromptEditMode) -> Cow<str> {
         if self.indicator.is_empty() {
             self.default.render_prompt_indicator(edit_mode)
@@ -57,16 +64,20 @@ impl ReplPrompt {
         ReplPrompt {
             prefix: left_prompt.to_string(),
             default: DefaultPrompt::default(),
-            indicator: String::new()
+            indicator: String::new(),
+            timestamp: true
         }
     }
 
-    #[allow(dead_code)]
     pub fn update_prefix(&mut self, prefix: &str) {
         self.prefix = prefix.to_string();
     }
 
     pub fn update_indicator(&mut self, indicator: &str) {
         self.indicator = indicator.to_string();
+    }
+
+    pub fn show_timestamp(&mut self, hide: bool) {
+        self.timestamp = hide;
     }
 }
