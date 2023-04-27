@@ -52,9 +52,7 @@ impl Prompt for ReplPrompt {
 
 impl Default for ReplPrompt {
     fn default() -> Self {
-        ReplPrompt::new(
-            "repl",
-        )
+        ReplPrompt::new("repl")
     }
 }
 
