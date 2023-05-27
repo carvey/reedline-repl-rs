@@ -11,7 +11,7 @@ use nu_ansi_term::{Color, Style};
 use reedline::{
     self, default_emacs_keybindings, ColumnarMenu, DefaultHinter, DefaultValidator, Emacs,
     ExampleHighlighter, FileBackedHistory, KeyCode, KeyModifiers, Keybindings, Reedline,
-    ReedlineEvent, ReedlineMenu, Signal,
+    ReedlineEvent, ReedlineMenu, Signal, ExternalPrinter
 };
 use std::boxed::Box;
 use std::collections::HashMap;
@@ -47,6 +47,7 @@ pub struct Repl<Context, E: Display> {
     stop_on_ctrl_c: bool,
     stop_on_ctrl_d: bool,
     error_handler: ErrorHandler<Context, E>,
+    printer: ExternalPrinter<String>
 }
 
 impl<Context, E> Repl<Context, E>
@@ -86,6 +87,7 @@ where
             stop_on_ctrl_c: false,
             stop_on_ctrl_d: true,
             error_handler: default_error_handler,
+            printer: ExternalPrinter::default()
         }
     }
 
@@ -281,6 +283,10 @@ where
             ReplCommand::new_async(&name, command, callback),
         );
         self
+    }
+
+    pub fn get_external_printer(&self) -> ExternalPrinter<String> {
+        self.printer.clone()
     }
 
     fn show_help(&self, args: &[&str]) -> Result<()> {
@@ -490,7 +496,8 @@ where
             .with_highlighter(Box::new(ExampleHighlighter::new(valid_commands.clone())))
             .with_validator(validator)
             .with_partial_completions(self.partial_completions)
-            .with_quick_completions(self.quick_completions);
+            .with_quick_completions(self.quick_completions)
+            .with_external_printer(self.printer.clone());
 
         if self.hinter_enabled {
             line_editor = line_editor.with_hinter(Box::new(
