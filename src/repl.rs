@@ -63,7 +63,8 @@ where
             KeyCode::Tab,
             ReedlineEvent::Menu("completion_menu".to_string()),
         );
-        let prompt = ReplPrompt::new(&paint_green_bold(&format!("{}> ", name)));
+
+        let prompt = ReplPrompt::new(&paint_green_bold(&name));
 
         Self {
             name,
@@ -157,6 +158,20 @@ where
     /// &Paint::green(format!("{}> ", name)).bold().to_string()
     pub fn with_formatted_prompt(mut self, prompt: &str) -> Self {
         self.prompt.update_prefix(prompt);
+
+        self
+    }
+
+    /// Give your Repl a custom prompt indicator. The default prompt indicator is `〉`
+    pub fn with_prompt_indicator(mut self, prompt_indicator: &str) -> Self {
+        self.prompt.update_indicator(prompt_indicator);
+
+        self
+    }
+
+    /// Show or hide the timestamp on the right side of the prompt. The default is to show the timestamp.
+    pub fn with_timestamp(mut self, hide_time: bool) -> Self {
+        self.prompt.show_timestamp(hide_time);
 
         self
     }
