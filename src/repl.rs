@@ -216,6 +216,12 @@ where
         self
     }
 
+    pub fn with_external_printer(mut self, printer: ExternalPrinter<String>) -> Self {
+        self.printer = printer;
+
+        self
+    }
+
     /// Sets the style for reedline's fish-style history autosuggestions
     ///
     /// Default: `nu_ansi_term::Style::new().italic().fg(nu_ansi_term::Color::LightGray)`
